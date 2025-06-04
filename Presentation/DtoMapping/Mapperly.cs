@@ -5,7 +5,7 @@ namespace Presentation.DtoMapping;
 
 public static class Mapperly
 {
-    // DepartmentViewModel <-> DepartmentDto
+    
     public static DepartmentViewModel ToViewModel(this DepartmentDto dto)
     {
         return new DepartmentViewModel()
@@ -27,7 +27,7 @@ public static class Mapperly
         };
     }
 
-    // DepartmentsViewModel <-> DepartmentsDto
+    
     public static DepartmentsViewModel ToViewModel(this DepartmentsDto dto)
     {
         return new DepartmentsViewModel()

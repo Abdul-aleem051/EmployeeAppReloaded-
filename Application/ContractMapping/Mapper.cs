@@ -1,38 +1,48 @@
 ﻿using Application.Dtos;
 using Data.Model;
 
-namespace Application.ContractMapping;
-public static class Mapper
+namespace Application.ContractMapping
 {
-    public static DepartmentDto ToDto(this Department department)
+    public static class Mapper
     {
-        if (department == null) return null!;
-
-        return new DepartmentDto
+        public static DepartmentDto ToDto(this Department department)
         {
-            Id = department.Id,
-            Name = department.Name,
-            Description = department.Description
-        };
-    }
+            if (department == null) return null!; 
 
-    public static Department ToModel(this CreateDepartmentDto createDepartmentDto)
-    {
-        if (createDepartmentDto == null) return null!;
-        return new Department
-        {
-            Id = Guid.NewGuid(),
-            Name = createDepartmentDto.Name,
-            Description = createDepartmentDto.Description
-        };
-    }
+            return new DepartmentDto
+            {
+                Id = department.Id,
+                Name = department.Name,
+                Description = department.Description
+            };
+        }
 
-    public static DepartmentsDto DepartmentsDto(this List<Department> departments)
-    {
-        if (departments == null || !departments.Any()) return null!;
-        return new DepartmentsDto
+        public static Department ToModel(this CreateDepartmentDto createDepartmentDto)
         {
-            Departments = departments.Select(d => d.ToDto()).ToList()
-        };
+            if (createDepartmentDto == null) return null!;
+
+            return new Department
+            {
+                Id = Guid.NewGuid(),
+                Name = createDepartmentDto.Name,
+                Description = createDepartmentDto.Description
+            };
+        }
+
+        public static DepartmentsDto DepartmentsDto(this List<Department> departments)
+        {
+            if (departments == null || !departments.Any())
+            {
+                return new DepartmentsDto
+                {
+                    Departments = new List<DepartmentDto>() 
+                };
+            }
+
+            return new DepartmentsDto
+            {
+                Departments = departments.Select(d => d.ToDto()).ToList()
+            };
+        }
     }
 }

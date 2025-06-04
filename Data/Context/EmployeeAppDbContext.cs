@@ -10,6 +10,7 @@ public class EmployeeAppDbContext : DbContext
 
     public DbSet<Employee> Employees { get; set; } = default!;
     public DbSet<Department> Departments { get; set; } = default!;
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -32,32 +32,62 @@ public class DepartmentService : IDepartmentService
 
             return department.ToDto();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine("An error occurred while creating the department.", ex);
             return new DepartmentDto();
         }
     }
 
-    public Task DeleteDepartmentAsync(Guid departmentId)
+    public async Task<bool> UpdateDepartmentAsync(DepartmentDto dto)
     {
-        throw new NotImplementedException();
+        var department = await _context.Departments.FindAsync(dto.Id);
+        if (department == null)
+            return false;
+
+        department.Name = dto.Name;
+        department.Description = dto.Description;
+        
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteDepartmentAsync(Guid departmentId)
+    {
+        var department = await _context.Departments.FindAsync(departmentId);
+        if (department == null) return false;
+
+        _context.Departments.Remove(department);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<DepartmentsDto> GetAllDepartmentsAsync()
     {
-        var departments = await _context.Departments.ToListAsync();
+        var departments = await _context.Departments
+            .Include(d => d.Employees) 
+            .ToListAsync();
 
         return departments.DepartmentsDto();
     }
 
-    public Task<DepartmentDto> GetDepartmentByIdAsync(Guid departmentId)
+    public async Task<DepartmentDto> GetDepartmentByIdAsync(Guid departmentId)
     {
-        throw new NotImplementedException();
+        var department = await _context.Departments
+            .Include(d => d.Employees) 
+            .FirstOrDefaultAsync(d => d.Id == departmentId);
+
+        if (department == null)
+            return null!;
+
+        return new DepartmentDto
+        {
+            Id = department.Id,
+            Name = department.Name,
+            Description = department.Description,
+            
+        };
     }
 
-    public Task<DepartmentDto> UpdateDepartmentAsync(DepartmentDto departmentDto)
-    {
-        throw new NotImplementedException();
-    }
 }
