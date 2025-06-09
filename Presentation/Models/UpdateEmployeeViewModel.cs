@@ -20,6 +20,7 @@ public class UpdateEmployeeViewModel
     public decimal Salary { get; set; }
 
     public Guid DepartmentId { get; set; } = default!;
+
     [BindNever]
     [ValidateNever]
     public IEnumerable<SelectListItem> Departments { get; set; } = default!;

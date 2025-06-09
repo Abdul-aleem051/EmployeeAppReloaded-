@@ -1,5 +1,5 @@
 ﻿using Application.Services.Department;
-using Application.Services.Employee;
+using Application.Services.EmployeeModule;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

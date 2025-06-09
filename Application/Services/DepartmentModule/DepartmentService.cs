@@ -1,6 +1,7 @@
 ﻿using Application.ContractMapping;
 using Application.Dtos;
 using Data.Context;
+using Data.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services.Department;
@@ -47,7 +48,7 @@ public class DepartmentService : IDepartmentService
 
         department.Name = dto.Name;
         department.Description = dto.Description;
-        
+
 
         await _context.SaveChangesAsync();
         return true;
@@ -56,7 +57,11 @@ public class DepartmentService : IDepartmentService
     public async Task<bool> DeleteDepartmentAsync(Guid departmentId)
     {
         var department = await _context.Departments.FindAsync(departmentId);
-        if (department == null) return false;
+
+        if (department == null)
+        {
+            return false;
+        }
 
         _context.Departments.Remove(department);
         await _context.SaveChangesAsync();
@@ -66,7 +71,7 @@ public class DepartmentService : IDepartmentService
     public async Task<DepartmentsDto> GetAllDepartmentsAsync()
     {
         var departments = await _context.Departments
-            .Include(d => d.Employees) 
+            .Include(d => d.Employees)
             .ToListAsync();
 
         return departments.DepartmentsDto();
@@ -75,7 +80,7 @@ public class DepartmentService : IDepartmentService
     public async Task<DepartmentDto> GetDepartmentByIdAsync(Guid departmentId)
     {
         var department = await _context.Departments
-            .Include(d => d.Employees) 
+            .Include(d => d.Employees)
             .FirstOrDefaultAsync(d => d.Id == departmentId);
 
         if (department == null)
@@ -86,7 +91,7 @@ public class DepartmentService : IDepartmentService
             Id = department.Id,
             Name = department.Name,
             Description = department.Description,
-            
+
         };
     }
 

@@ -5,7 +5,7 @@ using Data.Context;
 using Data.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Services.Employee;
+namespace Application.Services.EmployeeModule;
 
 public class EmployeeService : IEmployeeService
 {
@@ -44,45 +44,46 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<EmployeeDto> UpdateEmployeeAsync(EmployeeDto dto)
+    public async Task<bool> UpdateEmployeeAsync(UpdateEmployeeDto dto)
     {
-        var data = new CreateEmployeeDto
+        var employee = await _context.Employees.FindAsync(dto.Id);
+
+        if (employee is null)
         {
-
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            HireDate = dto.HireDate,
-            Salary = dto.Salary,
-            DepartmentId = dto.DepartmentId
-        };
-
-        var employee = data.ToModel();
+            return false;
+        }
 
         try
         {
-            await _context.Employees.AddAsync(employee);
+            employee.FirstName = dto.FirstName;
+            employee.LastName = dto.LastName;
+            employee.HireDate = dto.HireDate;
+            employee.Salary = dto.Salary;
+            employee.DepartmentId = dto.DepartmentId;
+
             await _context.SaveChangesAsync();
 
-            return employee.ToDto();
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine("An unexpected error occured while trying to update Employee Data.", ex);
-            return new EmployeeDto();
+            return false;
         }
     }
 
-    public async Task<EmployeeDto> DeleteEmployeeAsync(Guid employeeId)
+    public async Task<bool> DeleteEmployeeAsync(Guid employeeId)
     {
         var employee = await _context.Employees.FindAsync(employeeId);
+
         if (employee == null)
         {
-            return null!;
+            return false;
         }
+
         _context.Employees.Remove(employee);
         await _context.SaveChangesAsync();
-        return employee.ToDto();
+        return true;
     }
 
     public async Task<List<EmployeeDto>> GetAllEmployeesAsync()

@@ -3,7 +3,7 @@ using Data.Model;
 
 namespace Application.ContractMapping
 {
-    public static class Mapper
+    public static class DepartmentMapper
     {
         public static DepartmentDto ToDto(this Department department)
         {

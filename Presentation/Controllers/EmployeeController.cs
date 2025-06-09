@@ -1,6 +1,6 @@
 using Application.Dtos;
 using Application.Services.Department;
-using Application.Services.Employee;
+using Application.Services.EmployeeModule;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Presentation.DtoMapping;
@@ -114,7 +114,6 @@ public class EmployeeController : BaseController
             return NotFound();
         }
 
-
         var model = new UpdateEmployeeViewModel
         {
             Id = employee.Id,
@@ -124,7 +123,7 @@ public class EmployeeController : BaseController
             HireDate = employee.HireDate,
             Salary = employee.Salary,
             DepartmentId = employee.DepartmentId,
-             Departments = await GetDepartmentSelectList()
+            Departments = await GetDepartmentSelectList()
         };
 
         return View(model);
@@ -142,30 +141,17 @@ public class EmployeeController : BaseController
 
         var dto = new UpdateEmployeeDto
         {
+            Id = model.Id,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Email = model.Email,
             HireDate = model.HireDate,
             Salary = model.Salary,
             DepartmentId = model.DepartmentId,
         };
 
-        var employeeDto = new EmployeeDto
-        {
-            Id = dto.Id,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            HireDate = dto.HireDate,
-            Salary = dto.Salary,
-            DepartmentId = dto.DepartmentId
-           
+        var result = await _employeeService.UpdateEmployeeAsync(dto);
 
-        };
-
-        var result = await _employeeService.UpdateEmployeeAsync(employeeDto);
-
-        if (result == null)
+        if (!result)
         {
             SetFlashMessage("An error occurred while updating the employee record. Please try again.", "error");
             return View(model);
@@ -173,19 +159,20 @@ public class EmployeeController : BaseController
 
         SetFlashMessage("Employee data updated successfully.", "success");
         return RedirectToAction(nameof(Index));
-
     }
-    [HttpPost]
-    public IActionResult Delete(Guid id)
-    {
-        var employee = _employeeService.GetEmployeeByIdAsync(id);
 
-        if (employee == null)
+    [HttpPost]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+       var result = await _employeeService.DeleteEmployeeAsync(id);
+
+        if (!result)
         {
-            return NotFound();
+            SetFlashMessage("An error occured while trying to delete record", "error");
+            return RedirectToAction(nameof(Index));
         }
 
-        _employeeService.DeleteEmployeeAsync(id);
+        SetFlashMessage("Employee record deleted successfully!", "success");
 
         return RedirectToAction(nameof(Index));
     }

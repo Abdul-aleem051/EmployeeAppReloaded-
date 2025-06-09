@@ -33,7 +33,7 @@ namespace Presentation.Controllers
                 Id = departmentDto.Id,
                 Name = departmentDto.Name,
                 Description = departmentDto.Description
-                
+
             };
 
             return View(viewModel);
@@ -128,16 +128,17 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public  IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var department =  _departmentService.GetDepartmentByIdAsync(id);
+            var result = await _departmentService.DeleteDepartmentAsync(id);
 
-            if (department == null)
+            if (!result)
             {
-                return NotFound();
+                SetFlashMessage("An error occured while trying to delete record", "error");
+                return RedirectToAction(nameof(Index));
             }
 
-             _departmentService.DeleteDepartmentAsync(id);
+            SetFlashMessage("Department record deleted successfully!", "success");
 
             return RedirectToAction(nameof(Index));
         }
