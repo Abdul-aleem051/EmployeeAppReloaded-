@@ -57,7 +57,6 @@ public class EmployeeService : IEmployeeService
         {
             employee.FirstName = dto.FirstName;
             employee.LastName = dto.LastName;
-            employee.HireDate = dto.HireDate;
             employee.Salary = dto.Salary;
             employee.DepartmentId = dto.DepartmentId;
 
